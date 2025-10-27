@@ -32,7 +32,7 @@ export default function HomePage() {
     element?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const tryweb = () => {
+  const tryWeb = () => {
     if (!user) {
       router.push('/login');
     } else {
@@ -114,7 +114,7 @@ export default function HomePage() {
             <div className="flex flex-col justify-center gap-4 sm:flex-row">
               <Button
                 size="lg"
-                onClick={tryweb}
+                onClick={tryWeb}
                 className="group bg-[#00FFFF] px-8 py-6 text-lg text-black hover:bg-[#00FFFF]/90"
               >
                 Try on Web
@@ -297,21 +297,30 @@ export default function HomePage() {
             <h2 className="mb-6 text-4xl font-bold text-balance sm:text-5xl">
               Ready to <span className="text-[#00FFFF]">Ignite</span> Your Cybersecurity?
             </h2>
-
-            <p className="mx-auto mb-12 max-w-2xl text-lg text-gray-400">
+            <p className="mx-auto max-w-2xl text-lg text-gray-400">
               Choose your platform and start protecting yourself today
+            </p>
+            <p className="mx-auto mt-1 mb-12 max-w-2xl text-lg text-gray-400">
+              Feature in progress
+              <span className="ml-1 inline-block">
+                <span className="animate-ellipsis flex w-6 justify-start"></span>
+              </span>
             </p>
 
             <div className="mb-8 flex flex-col justify-center gap-4 sm:flex-row">
               <Button
+                title="App coming soon!"
                 size="lg"
+                disabled
                 className="group bg-[#00FFFF] px-8 py-6 text-lg text-black hover:bg-[#00FFFF]/90"
               >
                 <Download className="mr-2 h-5 w-5" />
                 Download for Windows
               </Button>
               <Button
+                title="App coming soon!"
                 size="lg"
+                disabled
                 variant="outline"
                 className="border-[#00FFFF] bg-transparent px-8 py-6 text-lg text-[#00FFFF] hover:bg-[#00FFFF]/10"
               >
@@ -319,6 +328,8 @@ export default function HomePage() {
                 Download for macOS
               </Button>
               <Button
+                title="App coming soon!"
+                disabled
                 size="lg"
                 variant="outline"
                 className="border-[#00FFFF] bg-transparent px-8 py-6 text-lg text-[#00FFFF] hover:bg-[#00FFFF]/10"
@@ -327,11 +338,10 @@ export default function HomePage() {
                 Download for Linux
               </Button>
             </div>
-
             <div className="border-t border-[#00FFFF]/20 pt-8">
               <p className="mb-4 text-gray-400">Or try the web version with limited features</p>
               <Button
-                onClick={tryweb}
+                onClick={tryWeb}
                 size="lg"
                 variant="ghost"
                 className="text-[#00FFFF] hover:bg-[#00FFFF]/10"

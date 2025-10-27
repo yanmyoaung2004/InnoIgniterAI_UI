@@ -50,11 +50,27 @@ export default function Register() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#0A0A0A] p-4 text-white">
-      <div className="pointer-events-none fixed inset-0 opacity-20">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,255,255,0.1),transparent_50%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,255,255,0.05)_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+      <div className="absolute inset-0 opacity-10">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+            linear-gradient(#00FFFF 1px, transparent 1px),
+            linear-gradient(90deg, #00FFFF 1px, transparent 1px)
+          `,
+            backgroundSize: '50px 50px',
+            animation: 'grid-move 20s linear infinite',
+          }}
+        />
       </div>
-      <Card className="w-full max-w-md bg-black">
+
+      {/* Glowing orbs */}
+      <div className="absolute top-20 left-20 hidden h-96 w-96 animate-pulse rounded-full bg-cyan-500/20 blur-3xl md:block" />
+      <div
+        className="absolute right-20 bottom-20 h-96 w-96 animate-pulse rounded-full bg-[#1A1A40]/40 blur-3xl"
+        style={{ animationDelay: '1s' }}
+      />
+      <Card className="max-w- z-10 w-full max-w-md bg-[#1A1A40]/30">
         <CardHeader className="text-center">
           <div className="mb-0 flex justify-center">
             <div className="logo-glow relative flex h-24 w-full items-center justify-center">
@@ -67,7 +83,9 @@ export default function Register() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-white">
+                Email
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -78,7 +96,9 @@ export default function Register() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-white">
+                Password
+              </Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -100,7 +120,9 @@ export default function Register() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword" className="text-white">
+                Confirm Password
+              </Label>
               <Input
                 id="confirmPassword"
                 type="password"

@@ -22,6 +22,7 @@ export const AgentTile = ({
         trackRef={audioTrack}
         className={cn('flex aspect-video w-40 items-center justify-center gap-1')}
       >
+        
         <span
           className={cn([
             'bg-muted min-h-4 w-4 rounded-full',

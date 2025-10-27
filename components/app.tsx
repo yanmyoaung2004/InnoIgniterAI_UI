@@ -78,7 +78,8 @@ export function App({ appConfig }: AppProps) {
   const { startButtonText } = appConfig;
 
   return (
-    <main>
+    <main >
+      
       <MotionWelcome
         key="welcome"
         startButtonText={startButtonText}

@@ -1,99 +1,120 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { MonitorIcon, MoonIcon, SunIcon } from '@phosphor-icons/react';
+import { Moon, Sun, Monitor } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import type { ThemeMode } from '@/lib/types';
-import { THEME_MEDIA_QUERY, THEME_STORAGE_KEY, cn } from '@/lib/utils';
+import { THEME_MEDIA_QUERY, THEME_STORAGE_KEY } from '@/lib/utils';
+import { useTheme } from '@/context/theme-context';
+
+// Custom hook that provides fallback when ThemeProvider is not available
+function useThemeSafe() {
+  try {
+    return useTheme();
+  } catch (error) {
+    // Fallback to local state management when context is not available
+    const [theme, setTheme] = useState<ThemeMode>('system');
+    
+    useEffect(() => {
+      const stored = (localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode) ?? 'system';
+      setTheme(stored);
+    }, []);
+    
+    const handleSetTheme = (newTheme: ThemeMode) => {
+      applyTheme(newTheme);
+      setTheme(newTheme);
+    };
+    
+    return { theme, setTheme: handleSetTheme };
+  }
+}
 
 const THEME_SCRIPT = `
-  const doc = document.documentElement;
-  const theme = localStorage.getItem("${THEME_STORAGE_KEY}") ?? "system";
-
-  if (theme === "system") {
-    if (window.matchMedia("${THEME_MEDIA_QUERY}").matches) {
-      doc.classList.add("dark");
-    } else {
-      doc.classList.add("light");
+  (function() {
+    try {
+      const doc = document.documentElement;
+      const theme = localStorage.getItem("${THEME_STORAGE_KEY}") ?? "system";
+      console.log('Theme script running, stored theme:', theme);
+      
+      if (theme === "system") {
+        if (window.matchMedia("${THEME_MEDIA_QUERY}").matches) {
+          doc.classList.add("dark");
+          doc.classList.remove("light");
+        } else {
+          doc.classList.add("light");
+          doc.classList.remove("dark");
+        }
+      } else {
+        doc.classList.add(theme);
+        doc.classList.remove(theme === "dark" ? "light" : "dark");
+      }
+    } catch (e) {
+      console.error('Theme script error:', e);
     }
-  } else {
-    doc.classList.add(theme);
-  }
+  })();
 `
   .trim()
   .replace(/\n/g, '')
   .replace(/\s+/g, ' ');
 
 function applyTheme(theme: ThemeMode) {
-  const doc = document.documentElement;
+  try {
+    const doc = document.documentElement;
+    doc.classList.remove('dark', 'light');
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+    console.log('Applying theme:', theme);
 
-  doc.classList.remove('dark', 'light');
-  localStorage.setItem(THEME_STORAGE_KEY, theme);
-
-  if (theme === 'system') {
-    if (window.matchMedia(THEME_MEDIA_QUERY).matches) {
-      doc.classList.add('dark');
+    if (theme === 'system') {
+      if (window.matchMedia(THEME_MEDIA_QUERY).matches) {
+        doc.classList.add('dark');
+      } else {
+        doc.classList.add('light');
+      }
     } else {
-      doc.classList.add('light');
+      doc.classList.add(theme);
     }
-  } else {
-    doc.classList.add(theme);
+  } catch (error) {
+    console.error('Error applying theme:', error);
   }
-}
-
-interface ThemeToggleProps {
-  className?: string;
 }
 
 export function ApplyThemeScript() {
-  return <script id="theme-script">{THEME_SCRIPT}</script>;
+  return <script id="theme-script" dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />;
 }
 
-export function ThemeToggle({ className }: ThemeToggleProps) {
-  const [theme, setTheme] = useState<ThemeMode | undefined>(undefined);
+export function ThemeToggle() {
+  const { theme, setTheme } = useThemeSafe();
 
-  useEffect(() => {
-    const storedTheme = (localStorage.getItem(THEME_STORAGE_KEY) as ThemeMode) ?? 'system';
-
-    setTheme(storedTheme);
-  }, []);
-
-  function handleThemeChange(theme: ThemeMode) {
-    applyTheme(theme);
-    setTheme(theme);
-  }
+  const handleChange = (newTheme: ThemeMode) => {
+    setTheme(newTheme);
+  };
 
   return (
-    <div
-      className={cn(
-        'text-foreground bg-background flex w-full flex-row justify-end divide-x overflow-hidden rounded-full border',
-        className
-      )}
-    >
-      <span className="sr-only">Color scheme toggle</span>
-      <button
-        type="button"
-        onClick={() => handleThemeChange('dark')}
-        className="cursor-pointer p-1 pl-1.5"
-      >
-        <span className="sr-only">Enable dark color scheme</span>
-        <MoonIcon size={16} weight="bold" className={cn(theme !== 'dark' && 'opacity-25')} />
-      </button>
-      <button
-        type="button"
-        onClick={() => handleThemeChange('light')}
-        className="cursor-pointer px-1.5 py-1"
-      >
-        <span className="sr-only">Enable light color scheme</span>
-        <SunIcon size={16} weight="bold" className={cn(theme !== 'light' && 'opacity-25')} />
-      </button>
-      <button
-        type="button"
-        onClick={() => handleThemeChange('system')}
-        className="cursor-pointer p-1 pr-1.5"
-      >
-        <span className="sr-only">Enable system color scheme</span>
-        <MonitorIcon size={16} weight="bold" className={cn(theme !== 'system' && 'opacity-25')} />
-      </button>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon">
+          <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => handleChange('light')}>
+          <Sun className="mr-2 h-4 w-4" /> Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleChange('dark')}>
+          <Moon className="mr-2 h-4 w-4" /> Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleChange('system')}>
+          <Monitor className="mr-2 h-4 w-4" /> System
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

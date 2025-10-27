@@ -1,10 +1,12 @@
+import { Metadata } from 'next';
 import { Public_Sans } from 'next/font/google';
 import localFont from 'next/font/local';
 import { headers } from 'next/headers';
 import { APP_CONFIG_DEFAULTS } from '@/app-config';
-import { ApplyThemeScript, ThemeToggle } from '@/components/theme-toggle';
+import { ApplyThemeScript } from '@/components/theme-toggle';
 import { getAppConfig } from '@/lib/utils';
 import './globals.css';
+import { Providers } from './providers';
 
 const publicSans = Public_Sans({
   variable: '--font-public-sans',
@@ -41,6 +43,11 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
+export const metadata: Metadata = {
+  title: 'InnoIgniterAI - AI-Powered Cybersecurity',
+  description: 'Empowering Everyone to Stay Secure — Smarter, Faster, and in Real Time',
+};
+
 export default async function RootLayout({ children }: RootLayoutProps) {
   const hdrs = await headers();
   const { accent, accentDark, pageTitle, pageDescription } = await getAppConfig(hdrs);
@@ -62,17 +69,15 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <head>
         {styles && <style>{styles}</style>}
-        <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
+        <link rel="icon" type="image/png" sizes="32x32" href="/logo_dark.png" />
         <ApplyThemeScript />
       </head>
       <body
+        suppressHydrationWarning
         className={`${publicSans.variable} ${commitMono.variable} overflow-x-hidden antialiased`}
       >
-        {children}
-        <div className="group fixed bottom-0 left-1/2 z-50 mb-2 -translate-x-1/2">
-          <ThemeToggle className="translate-y-20 transition-transform delay-150 duration-300 group-hover:translate-y-0" />
-        </div>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
